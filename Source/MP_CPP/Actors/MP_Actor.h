@@ -18,6 +18,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UFUNCTION(Client, Reliable)
+	void Client_PrintActorName();
 
 public:
 	// Called every frame

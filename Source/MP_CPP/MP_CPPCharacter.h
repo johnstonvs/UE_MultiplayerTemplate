@@ -141,5 +141,17 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UMP_HealthComponent> HealthComponent;
+	
+	// Remote Procedure Call (RPC) - Client, Server, and NetMulticast
+	
+	UFUNCTION(Client, Reliable) // Client
+	void Client_PrintMessage(const FString& Message);
+	
+	FTimerHandle RPCDelayTimer;
+	
+	void OnRPCDelayTimer();
+	
+protected:
+	virtual void BeginPlay() override;
 };
 

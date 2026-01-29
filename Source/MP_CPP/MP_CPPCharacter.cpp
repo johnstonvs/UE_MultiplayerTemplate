@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Actors/MP_Actor.h"
 #include "Components/MP_HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -212,4 +213,38 @@ void AMP_CPPCharacter::OnRep_PickupCount(int32 PreviousValue)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("PickupCount Replicated: %i"), PickupCount));
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Previous PickupCount: %i"), PreviousValue));
+}
+
+// RPC function definitions are required to end with "_Implementation"
+void AMP_CPPCharacter::Client_PrintMessage_Implementation(const FString& Message)
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += Message;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Yellow, MessageString);
+}
+
+void AMP_CPPCharacter::OnRPCDelayTimer()
+{
+	/*
+	if (HasAuthority())
+	{
+		Client_PrintMessage(TEXT("This should run on the owning client."));
+	}
+	*/
+	
+	if (!HasAuthority()) return;
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	
+	GetWorld()->SpawnActor<AMP_Actor>(GetActorLocation(), GetActorRotation(), SpawnParams);
+}
+
+void AMP_CPPCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	// Setting a timer to call the client RPC. Begin play is called too early to recognize net roles.
+	GetWorldTimerManager().SetTimer(RPCDelayTimer, this, &AMP_CPPCharacter::OnRPCDelayTimer, 4.f, false);
 }
