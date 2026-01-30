@@ -21,8 +21,13 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void Client_PrintActorName();
+	
+	UFUNCTION(Server, Reliable)
+	void Server_PrintActorName();
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	virtual void OnRep_Owner() override;
 };

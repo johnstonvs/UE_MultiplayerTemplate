@@ -198,9 +198,7 @@ void AMP_CPPCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropert
 
 void AMP_CPPCharacter::OnGeneralInput()
 {
-	bReplicatePickupCount = !bReplicatePickupCount;
-	
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
+	Server_PrintMessage(TEXT("This should run on the server."));
 }
 
 void AMP_CPPCharacter::OnRep_Armor()
@@ -222,6 +220,14 @@ void AMP_CPPCharacter::Client_PrintMessage_Implementation(const FString& Message
 	MessageString += Message;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Yellow, MessageString);
+}
+
+void AMP_CPPCharacter::Server_PrintMessage_Implementation(const FString& Message)
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += Message;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Purple, MessageString);
 }
 
 void AMP_CPPCharacter::OnRPCDelayTimer()

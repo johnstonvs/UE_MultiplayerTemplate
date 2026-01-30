@@ -38,9 +38,24 @@ void AMP_Actor::Client_PrintActorName_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Yellow, MessageString);
 }
 
+void AMP_Actor::Server_PrintActorName_Implementation()
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += GetName();
+	
+	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Purple, MessageString);
+}
+
 // Called every frame
 void AMP_Actor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AMP_Actor::OnRep_Owner()
+{
+	Super::OnRep_Owner();
+	
+	Server_PrintActorName();
 }
 

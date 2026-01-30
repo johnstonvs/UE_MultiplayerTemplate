@@ -144,8 +144,11 @@ private:
 	
 	// Remote Procedure Call (RPC) - Client, Server, and NetMulticast
 	
-	UFUNCTION(Client, Reliable) // Client
+	UFUNCTION(Client, Reliable) // Client - standard practice to prepend any client RPC with "Client_"
 	void Client_PrintMessage(const FString& Message);
+	
+	UFUNCTION(Server, Reliable) // Server
+	void Server_PrintMessage(const FString& Message);
 	
 	FTimerHandle RPCDelayTimer;
 	
